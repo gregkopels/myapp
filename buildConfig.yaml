@@ -1,0 +1,32 @@
+kind: "DeploymentConfig"
+apiVersion: "v1"
+metadata:
+  name: "my-web-docker"
+spec:
+  template: 
+    metadata:
+      labels:
+        name: "my-web-docker"
+    spec:
+      containers:
+        - name: "my-web-docker"
+          image: "my-web-docker:latest"
+          ports:
+            - containerPort: 8080
+              protocol: "TCP"
+  replicas: 1
+  triggers:
+    - type: "ConfigChange" 
+    - type: "ImageChange" 
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - "my-web-docker"
+        from:
+          kind: "ImageStreamTag"
+          name: "my-web-docker:latest"
+  strategy: 
+    type: "Rolling"
+  paused: false 
+  revisionHistoryLimit: 2 
+  minReadySeconds: 0 
